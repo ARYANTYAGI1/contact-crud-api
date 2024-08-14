@@ -17,8 +17,9 @@ const contactSchema = new Schema(
 contactSchema.pre('save',function(next){
     this.updated_at = Date.now()
     this.email = this.email ? this.email.toLowerCase().trim() : this.email;
+    next();
 })
 
-const User = mongoose.model("User", userSchema);
+const Contact = mongoose.model('Contact', contactSchema);
 
-module.exports = User;
+module.exports = Contact;
