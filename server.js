@@ -18,6 +18,10 @@ app.get('/', (req, res)=>{
 const contactRoutes = require('./routes/contact');
 app.use('/api', contactRoutes);
 
+//UserRoutes
+const UserRoutes = require('./routes/user');
+app.use('/api', UserRoutes)
+
 const PORT = process.env.PORT || 8000
 app.listen(PORT,()=>{
     console.log(`Server Started at ${PORT}`)
