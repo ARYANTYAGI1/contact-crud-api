@@ -6,6 +6,7 @@ const contactSchema = new Schema(
     name: { type: String, default: '' },
     email: { type: String, default: '' },
     mobileNumber: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     createdAt: { type: Date },
     updatedAt: { type: Date }
   },

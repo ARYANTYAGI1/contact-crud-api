@@ -5,17 +5,17 @@ module.exports = {
   addContact: async function (req, res) {
     try {
       const { name, email, mobileNumber } = req.body;
-      const mobileExist = await Contact.findOne({ mobileNumber: mobileNumber });
+      const mobileExist = await Contact.findOne({ mobileNumber: mobileNumber, user: req.user.id });
       if (mobileExist) return res.status(400).send({ sucess: false, message: 'mobileAlreadyExist', data: null });
       const contact = new Contact({
         name: name,
         email: email,
-        mobileNumber: mobileNumber
+        mobileNumber: mobileNumber,
+        user: req.user.id
       })
       await contact.save()
       return res.status(200).send({ sucess: true, message: 'contactAddedSuccessfully', data: contact})
     } catch (error) {
-        console.log(error)
         return res.status(500).send({ sucess: true, message: 'SomethingWentWrong', data: error})
     }
   },
@@ -36,18 +36,19 @@ module.exports = {
   },
 
   getContacts: async function (req, res) {
-    let query = {};
+    const user = req.user.id
+    let query = { };
     var offset = req.query.page ? (req.query.page - 1) * req.query.limit : 0;
     var limit = req.query.limit ? parseInt(req.query.limit) : 10;
     if (!query.$and) {
-        query.$and = [];
-    }  
+      query.$and = [];
+    } 
     if (req.query.name) {
       var name = req.query.name;
       query.$and.push({ '$or': [{ name: { $regex: new RegExp(name.toLowerCase(), 'i') } }, { email: { $regex: new RegExp(name.toLowerCase(), 'i') } }, { mobileNumber: { $regex: new RegExp(name.toLowerCase(), 'i') } }] });
     }
     if (!query.$and.length) {
-        query = {};
+        query = {user};
     }
     try {
       const [totalCount, contacts] = await Promise.all([

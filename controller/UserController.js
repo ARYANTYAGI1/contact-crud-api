@@ -7,7 +7,6 @@ module.exports = {
         try {
             const {name, email, password} = req.body
             const emailExist = await User.findOne({email: email});
-            console.log('emailExist',emailExist)
             if(emailExist) return res.status(400).send({ success: false, message: 'EmailAlreadyExist', data: null});
             const hashedPassword = await CommonHelper.bcryptPassword(password)
             const user = new User({
@@ -18,15 +17,16 @@ module.exports = {
             await user.save();
             res.status(200).send({ success: true, message: 'Registration Successfull', data: user._id})
         } catch (error) {
+            console.log(error)
             res.status(500).send({ success: false, message: 'SomethingWentWrong', data: error})
         }
     },
     login: async function (req, res) {
         try {
             const { email, password} = req.body;
-            const user = User.findOne({email: email});
+            const user = await User.findOne({email: email});
             if(!user) return res.status(404).send({ success: false, message: 'NoEmailRegisterd', data: null})
-            if(!CommonHelper.comparePassword(req.body.password, user.password)) return res.status(401).send({ success: false, message: 'InvalidEmailOrPassword', data: null });
+            if(!CommonHelper.comparePassword(password, user.password)) return res.status(401).send({ success: false, message: 'InvalidEmailOrPassword', data: null });
             token = AuthHelper.generateToken(user);
             res.status(200).send({ success: true, message: 'Registration Successfull', data: { user: user._id, token: token }})
         } catch (error) {
