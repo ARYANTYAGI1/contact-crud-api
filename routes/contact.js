@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const ContactController = require('../controller/ContactController')
 const auth = require('../helpers/auth').validateToken
+const contactValidation = require('../validations/contact')
+const validator = require('express-joi-validation').createValidator({});
 
-router.post('/add/contact', auth, function(req, res) {
+router.post('/add/contact', auth, validator.body(contactValidation.addContact), function(req, res) {
     ContactController.addContact(req, res)
 })
 
-router.post('/update/contact/:id', auth, function(req, res) {
+router.post('/update/contact/:id', auth, validator.body(contactValidation.addContact), function(req, res) {
     ContactController.updateContact(req, res)
 })
 

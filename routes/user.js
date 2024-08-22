@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controller/UserController')
+const userValidation = require('../validations/user')
+const validator = require('express-joi-validation').createValidator({});
 
-router.post('/register', function(req, res) {
+router.post('/register', validator.body(userValidation.registerValidation), function(req, res) {
     UserController.register(req, res)
 })
 
-router.post('/login', function(req, res) {
+router.post('/login', validator.body(userValidation.loginValidation), function(req, res) {
     UserController.login(req, res)
 })
-
-// router.get('/list/contacts', function(req, res) {
-//     ContactController.getContacts(req, res)
-// })
 
 module.exports = router;
